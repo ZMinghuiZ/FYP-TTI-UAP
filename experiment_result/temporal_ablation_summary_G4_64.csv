@@ -1,0 +1,21 @@
+name,source,variant,stretch,internvl_asr,qwen_asr,llava_onevision_asr,videollama3_asr,mean_asr
+EXP_reversed,G4,reversed,12,87.36,63.22,83.72,43.93,69.5575
+EXP_shuffle_s123,G4,shuffle_s123,12,91.38,43.68,89.53,43.35,66.985
+EXP_shuffle_s42,G4,shuffle_s42,12,88.51,45.4,86.63,36.42,64.24
+EXP_shuffle_s999,G4,shuffle_s999,12,89.08,27.01,86.63,47.4,62.53
+EXP_reversed,G4,reversed,24,89.08,71.84,83.72,47.4,73.01
+EXP_shuffle_s123,G4,shuffle_s123,24,90.23,64.94,87.79,43.35,71.5775
+EXP_shuffle_s42,G4,shuffle_s42,24,88.51,67.24,82.56,37.57,68.97
+EXP_shuffle_s999,G4,shuffle_s999,24,87.93,72.99,87.21,55.49,75.905
+EXP_reversed,G4,reversed,32,91.95,75.29,84.3,39.88,79.0325
+EXP_shuffle_s123,G4,shuffle_s123,32,89.66,70.69,86.63,45.66,80.4875
+EXP_shuffle_s42,G4,shuffle_s42,32,88.51,67.82,78.49,39.88,51.72
+EXP_shuffle_s999,G4,shuffle_s999,32,89.66,71.26,87.79,47.98,81.3575
+EXP_G4_reversed_s64,G4,reversed,64,89.08,81.61,83.72,41.62,74.0075
+EXP_G4_shuffle_s123_s64,G4,shuffle_s123,64,87.36,77.59,86.05,40.46,72.865
+EXP_G4_shuffle_s42_s64,G4,shuffle_s42,64,85.63,72.41,79.07,47.4,53.025
+EXP_G4_shuffle_s999_s64,G4,shuffle_s999,64,89.66,74.71,85.47,41.62,54.1875
+EXP_G4_static_frame0,G4,static_frame0,-,86.21,67.24,91.86,33.53,70.86
+EXP_S5_static_frame0,S5,static_frame0,-,26.44,14.37,69.77,23.12,33.425
+EXP_S13_static_frame0,S13,static_frame0,-,3.45,9.2,27.91,23.7,16.065
+EXP_image_UAP,UAP,x-transfer UAP,-,35.63%,13.79%,72.67%,15.03%

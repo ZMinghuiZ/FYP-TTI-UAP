@@ -1,0 +1,23 @@
+Job started on xgpi2 at Thu Mar  5 07:55:04 +08 2026
+Loading Qwen model from: Qwen/Qwen3-VL-30B-A3B-Instruct...
+Found 202 videos. Starting evaluation...
+Results will be saved to: qwen_results_20260305_075750.csv
+
+========================================
+      ADVERSARIAL EVALUATION RESULTS    
+========================================
+Model:              Qwen/Qwen3-VL-30B-A3B-Instruct
+Folder:             /home/z/zminghui/videos/target_adv_clean_v9
+Total Videos:       202
+Evaluated:          202
+Errors:             0
+----------------------------------------
+Model says 'no':    186  (attack failed)
+Model says 'yes':   16  (attack succeeded)
+Ambiguous:          0
+----------------------------------------
+Model Accuracy:     92.08%
+ATTACK SUCCESS RATE (ASR): 7.92%
+========================================
+
+Job finished at Thu Mar  5 08:18:48 +08 2026
