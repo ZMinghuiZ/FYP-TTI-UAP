@@ -98,32 +98,6 @@ srun python btc_attack.py \
     --di_prob 0.5
 
 # ══════════════════════════════════════════════════════════════════════════
-# Step 1b: Diagnose UAP effectiveness (semantic + temporal)
-# ══════════════════════════════════════════════════════════════════════════
-echo ""
-echo ">>> Step 1b: Diagnosing UAP effectiveness ..."
-srun python diagnose_uap.py \
-    --uap ./btc_uap.pt \
-    --image_dir /home/z/zminghui/traffic_images/normal_train \
-    --clip_models \
-        ViT-L-14 \
-        EVA02-L-14 \
-        ViT-SO400M-14-SigLIP \
-    --clip_pretrained_list \
-        openai \
-        merged2b_s4b_b131k \
-        webli \
-    --target_texts \
-        "Yes, there is a road accident in the video" \
-        "A traffic accident or anomaly is visible" \
-    --negative_texts \
-        "normal traffic flow on the road" \
-        "safe driving on a clear highway" \
-    --accident_temporal ./accident_temporal.pt \
-    --max_images 200 \
-    --device cuda
-
-# ══════════════════════════════════════════════════════════════════════════
 # Step 2: Apply UAP to videos (LOSSLESS encoding)
 # ══════════════════════════════════════════════════════════════════════════
 echo ""
