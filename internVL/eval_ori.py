@@ -226,7 +226,7 @@ def main(model_path, accident_folder):
                 
                 # 2. Construct Prompt
                 video_prefix = ''.join([f'Frame{i+1}: <image>\n' for i in range(len(num_patches_list))])
-                question = video_prefix + 'Is there any road accident or anomaly in the video? Answer yes or no.'
+                question = video_prefix + 'Are there any road accidents or anomalies in the video? Answer yes or no.'
 
                 # 3. Chat (Using the model's custom .chat() method)
                 response, _ = model.chat(

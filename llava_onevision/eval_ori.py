@@ -141,7 +141,7 @@ def main(model_path, accident_folder):
                         "role": "user",
                         "content": [
                             {"type": "video", "path": video_path},
-                            {"type": "text", "text": "Is there any road accident or anomaly in the video? Answer yes or no."},
+                            {"type": "text", "text": "Are there any road accidents or anomalies in the video? Answer yes or no."},
                         ],
                     },
                 ]
