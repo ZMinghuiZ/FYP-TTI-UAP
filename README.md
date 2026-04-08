@@ -75,6 +75,10 @@ FYP-TTI-UAP/
 └── experiment_result/              # Output CSVs
 ```
 
+## Dataset
+
+The datasets used in this project (training images, evaluation videos, and template extraction videos) are available on [Google Drive](https://drive.google.com/drive/folders/14hmbyVcycj8ysrMwsQgh8XuGUQFy-AUV?usp=sharing).
+
 ## Prerequisites
 
 - Python 3.10+
