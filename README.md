@@ -173,14 +173,3 @@ python analysis/compute_quality.py --clean_dir "$VIDEO_DIR_CLEAN" --adv_dir adve
 | Qwen3-VL-8B | `Qwen/Qwen3-VL-8B-Instruct` | `eval_ori.py` |
 | LLaVA-OneVision-7B | `llava-hf/llava-onevision-qwen2-7b-ov-hf` | all |
 | VideoLLaMA3-7B | `DAMO-NLP-SG/VideoLLaMA3-7B` | all |
-
-## Citation
-
-```bibtex
-@misc{tti-uap-2025,
-  title   = {TTI-UAP: Temporal Trajectory Injection Universal Adversarial Perturbation for Video Large Language Models},
-  author  = {Zhu Minghui},
-  year    = {2025},
-  school  = {National University of Singapore}
-}
-```
