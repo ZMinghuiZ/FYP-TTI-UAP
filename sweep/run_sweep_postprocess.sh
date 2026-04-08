@@ -30,9 +30,8 @@
 set -euo pipefail
 
 source ~/.bashrc
-conda activate videollama
-
-SCRIPT_DIR="/home/z/zminghui/ult_attack"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs
 
@@ -138,7 +137,7 @@ for KEY in $(echo "${!PP_CONFIGS[@]}" | tr ' ' '\n' | sort -n); do
                   --bilateral_sigma_space "$SIGMA_SPACE")
     fi
 
-    srun python "${SCRIPT_DIR}/postprocess_videos.py" "${PP_ARGS[@]}"
+    srun python "${REPO_ROOT}/attack/postprocess_videos.py" "${PP_ARGS[@]}"
 
     echo "    Post-processed videos saved to ${OUT_DIR}"
 
@@ -148,7 +147,7 @@ for KEY in $(echo "${!PP_CONFIGS[@]}" | tr ' ' '\n' | sort -n); do
     cd "$OUT_DIR_ABS"
     srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'internVL'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'internVL'))
 os.chdir('${OUT_DIR_ABS}')
 from eval_ori import main
 main('${INTERNVL_MODEL}', '${OUT_DIR_ABS}')
@@ -162,7 +161,7 @@ main('${INTERNVL_MODEL}', '${OUT_DIR_ABS}')
     cd "$OUT_DIR_ABS"
     srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'qwen3'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'qwen3'))
 os.chdir('${OUT_DIR_ABS}')
 from eval_ori import main
 main('${QWEN_MODEL}', '${OUT_DIR_ABS}')
@@ -176,7 +175,7 @@ main('${QWEN_MODEL}', '${OUT_DIR_ABS}')
     cd "$OUT_DIR_ABS"
     srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'llava_onevision'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'llava_onevision'))
 os.chdir('${OUT_DIR_ABS}')
 from eval_ori import main
 main('${LLAVA_MODEL}', '${OUT_DIR_ABS}')
@@ -190,7 +189,7 @@ main('${LLAVA_MODEL}', '${OUT_DIR_ABS}')
     cd "$OUT_DIR_ABS"
     srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'videollama3'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'videollama3'))
 os.chdir('${OUT_DIR_ABS}')
 from eval_ori import main
 main('${VIDEOLLAMA3_MODEL}', '${OUT_DIR_ABS}')

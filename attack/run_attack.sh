@@ -11,7 +11,8 @@
 
 
 source ~/.bashrc
-conda activate videollama
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 
 cd $SLURM_SUBMIT_DIR
 mkdir -p logs
@@ -33,8 +34,8 @@ echo ""
 # concentrates frames near the collision point.
 if [ ! -f ./accident_temporal.pt ]; then
     echo ">>> Step 0: Pre-computing accident temporal templates ..."
-    srun python precompute_accident_temporal.py \
-        --video_dir /home/z/zminghui/videos/acc_train \
+    srun python "${REPO_ROOT}/attack/precompute_accident_temporal.py" \
+        --video_dir "${VIDEO_DIR_ACC_TRAIN}" \
         --output ./accident_temporal.pt \
         --N 32 \
         --clip_models \
@@ -63,8 +64,8 @@ fi
 #   L_traj  : trajectory matching against accident temporal template
 #   L_trans : inter-frame transition pattern matching
 echo ">>> Step 1: Training TTI-UAP ..."
-srun python btc_attack.py \
-    --image_dir /home/z/zminghui/traffic_images/normal_train \
+srun python "${REPO_ROOT}/attack/btc_attack.py" \
+    --image_dir "${IMAGE_DIR_NORMAL}" \
     --output ./btc_uap.pt \
     --clip_models \
         ViT-L-14 \
@@ -102,10 +103,10 @@ srun python btc_attack.py \
 # ══════════════════════════════════════════════════════════════════════════
 echo ""
 echo ">>> Step 2: Applying UAP to videos (lossless) ..."
-srun python apply_uap.py \
+srun python "${REPO_ROOT}/attack/apply_uap.py" \
     --uap ./btc_uap.pt \
-    --video_dir /home/z/zminghui/videos/eval/clean \
-    --output_dir /home/z/zminghui/videos/target_adv_clean_v12 \
+    --video_dir "${VIDEO_DIR_CLEAN}" \
+    --output_dir "${ADV_OUTPUT_DIR}" \
     --stretch 4 \
     --lossless
 

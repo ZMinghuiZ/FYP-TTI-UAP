@@ -21,12 +21,14 @@ mkdir -p logs
 # 2. Load Modules & Activate Environment (Adjust names as needed)
 # module load cuda/11.8 
 source ~/.bashrc
-conda activate videollama # <--- REPLACE with your actual environment name
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 
 # --- Execution ---
 echo "Starting evaluation script..."
 
 # srun handles the job step creation
-srun python eval_ori.py
+srun python "${REPO_ROOT}/evaluation/internVL/eval_ori.py" \
+    --video_dir "${ADV_OUTPUT_DIR}"
 
 echo "Job finished on $(date)"

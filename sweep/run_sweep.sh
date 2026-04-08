@@ -20,16 +20,15 @@
 set -euo pipefail
 
 source ~/.bashrc
-conda activate videollama
-
-SCRIPT_DIR="/home/z/zminghui/ult_attack"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs
 
 # ── Paths (edit these to match your cluster) ──────────────────────────────
-IMAGE_DIR="/home/z/zminghui/traffic_images/normal_train"
-VIDEO_DIR="/home/z/zminghui/videos/eval/clean"
-TEMPORAL_PT="${SCRIPT_DIR}/accident_temporal.pt"
+IMAGE_DIR="${IMAGE_DIR_NORMAL}"
+VIDEO_DIR="${VIDEO_DIR_CLEAN}"
+TEMPORAL_PT="${REPO_ROOT}/accident_temporal.pt"
 
 QWEN_MODEL="Qwen/Qwen3-VL-30B-A3B-Instruct"
 LLAVA_MODEL="llava-hf/llava-onevision-qwen2-7b-ov-hf"
@@ -116,7 +115,7 @@ if [ "$LAMBDA_TRAJ" != "0.0" ] || [ "$LAMBDA_TRANS" != "0.0" ]; then
     TEMPORAL_ARGS="--accident_temporal ${TEMPORAL_PT}"
 fi
 
-srun python "${SCRIPT_DIR}/btc_attack.py" \
+srun python "${REPO_ROOT}/attack/btc_attack.py" \
     --image_dir "$IMAGE_DIR" \
     --output "$UAP_PATH" \
     --clip_models "${CLIP_MODELS[@]}" \
@@ -146,7 +145,7 @@ echo "UAP saved to ${UAP_PATH}"
 echo ""
 echo ">>> Step 2: Applying UAP to videos ..."
 
-srun python "${SCRIPT_DIR}/apply_uap.py" \
+srun python "${REPO_ROOT}/attack/apply_uap.py" \
     --uap "$UAP_PATH" \
     --video_dir "$VIDEO_DIR" \
     --output_dir "$ADV_DIR" \
@@ -165,7 +164,7 @@ echo ">>> Step 3: Evaluating on InternVL3 ..."
 cd "$EVAL_CWD"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'internVL'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'internVL'))
 os.chdir('${EVAL_CWD}')
 from eval_ori import main
 main('${INTERNVL_MODEL}', '${ADV_DIR_ABS}')
@@ -184,7 +183,7 @@ echo ">>> Step 4: Evaluating on Qwen3-VL ..."
 cd "$EVAL_CWD"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'qwen3'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'qwen3'))
 os.chdir('${EVAL_CWD}')
 from eval_ori import main
 main('${QWEN_MODEL}', '${ADV_DIR_ABS}')
@@ -203,7 +202,7 @@ echo ">>> Step 5: Evaluating on LLaVA-OneVision ..."
 cd "$EVAL_CWD"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'llava_onevision'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'llava_onevision'))
 os.chdir('${EVAL_CWD}')
 from eval_ori import main
 main('${LLAVA_MODEL}', '${ADV_DIR_ABS}')
@@ -222,7 +221,7 @@ echo ">>> Step 6: Evaluating on VideoLLaMA3 ..."
 cd "$EVAL_CWD"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'videollama3'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'videollama3'))
 os.chdir('${EVAL_CWD}')
 from eval_ori import main
 main('${VIDEOLLAMA3_MODEL}', '${ADV_DIR_ABS}')

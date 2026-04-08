@@ -30,14 +30,13 @@
 set -euo pipefail
 
 source ~/.bashrc
-conda activate videollama
-
-SCRIPT_DIR="/home/z/zminghui/ult_attack"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs
 
 # ── Paths ─────────────────────────────────────────────────────────────────
-VIDEO_DIR="/home/z/zminghui/videos/eval/clean"
+VIDEO_DIR="${VIDEO_DIR_CLEAN}"
 
 INTERNVL_MODEL="OpenGVLab/InternVL3-38B"
 QWEN_MODEL="Qwen/Qwen3-VL-30B-A3B-Instruct"
@@ -100,7 +99,7 @@ mkdir -p "$ADV_DIR"
 # ══════════════════════════════════════════════════════════════════════════
 echo ">>> Step 1: Applying UAP to videos ..."
 
-srun python "${SCRIPT_DIR}/apply_uap.py" \
+srun python "${REPO_ROOT}/attack/apply_uap.py" \
     --uap "$UAP_PATH" \
     --video_dir "$VIDEO_DIR" \
     --output_dir "$ADV_DIR" \
@@ -118,7 +117,7 @@ echo ">>> Step 2: Evaluating on InternVL3 ..."
 cd "$EVAL_CWD"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'internVL'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'internVL'))
 os.chdir('${EVAL_CWD}')
 from eval_ori import main
 main('${INTERNVL_MODEL}', '${ADV_DIR_ABS}')
@@ -135,7 +134,7 @@ echo ">>> Step 3: Evaluating on Qwen3-VL ..."
 cd "$EVAL_CWD"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'qwen3'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'qwen3'))
 os.chdir('${EVAL_CWD}')
 from eval_ori import main
 main('${QWEN_MODEL}', '${ADV_DIR_ABS}')
@@ -152,7 +151,7 @@ echo ">>> Step 4: Evaluating on LLaVA-OneVision ..."
 cd "$EVAL_CWD"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'llava_onevision'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'llava_onevision'))
 os.chdir('${EVAL_CWD}')
 from eval_ori import main
 main('${LLAVA_MODEL}', '${ADV_DIR_ABS}')
@@ -169,7 +168,7 @@ echo ">>> Step 5: Evaluating on VideoLLaMA3 ..."
 cd "$EVAL_CWD"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'videollama3'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'videollama3'))
 os.chdir('${EVAL_CWD}')
 from eval_ori import main
 main('${VIDEOLLAMA3_MODEL}', '${ADV_DIR_ABS}')

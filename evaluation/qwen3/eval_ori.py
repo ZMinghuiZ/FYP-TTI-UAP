@@ -1,3 +1,4 @@
+import argparse
 import os
 import csv
 import torch
@@ -5,56 +6,39 @@ import datetime
 from tqdm import tqdm
 
 # --- COMPATIBILITY PATCH (Must be before transformers import) ---
+# Fixes "module 'torch.compiler' has no attribute 'is_compiling'"
+# This handles cases where the PyTorch compiler backend is disabled or broken in the build.
 try:
     if not hasattr(torch, "compiler"):
+        # Create a dummy class if compiler module is missing entirely
         class DummyCompiler:
             def is_compiling(self): return False
         torch.compiler = DummyCompiler()
     elif not hasattr(torch.compiler, "is_compiling"):
+        # Monkey patch the function if the module exists but function is missing
         torch.compiler.is_compiling = lambda: False
 except Exception:
-    pass
+    pass 
 
-# --- TRANSFORMERS COMPATIBILITY PATCH ---
-# VideoInput type alias was added in transformers >= 4.45.
-# VideoLLaMA3's trust_remote_code modules import it, so inject it if missing.
-try:
-    from transformers.image_utils import VideoInput  # noqa: F401
-except ImportError:
-    from typing import List, Union
-    import numpy as _np
-    from PIL import Image as _PILImage
-    import transformers.image_utils as _img_utils
-
-    _img_utils.VideoInput = Union[
-        List[_PILImage.Image],
-        List["_np.ndarray"],
-        List["torch.Tensor"],
-        List[List[_PILImage.Image]],
-        List[List["_np.ndarray"]],
-        List[List["torch.Tensor"]],
-    ]
-
-from transformers import AutoModelForCausalLM, AutoProcessor
+from transformers import AutoModelForImageTextToText, AutoProcessor
 
 # ==========================================
 # 1. SETUP & HELPER FUNCTIONS
 # ==========================================
 
-def load_videollama3_model(model_path):
-    print(f"Loading VideoLLaMA3 model from: {model_path}...")
-
-    model = AutoModelForCausalLM.from_pretrained(
+def load_qwen_model(model_path):
+    print(f"Loading Qwen model from: {model_path}...")
+    
+    # Using AutoModelForImageTextToText as requested
+    model = AutoModelForImageTextToText.from_pretrained(
         model_path,
-        trust_remote_code=True,
+        torch_dtype="auto",
         device_map="auto",
-        torch_dtype=torch.bfloat16,
-        attn_implementation="flash_attention_2",
+        attn_implementation="flash_attention_2" 
     ).eval()
-
-    processor = AutoProcessor.from_pretrained(model_path, trust_remote_code=True)
+    
+    processor = AutoProcessor.from_pretrained(model_path)
     return model, processor
-
 
 def parse_response(text):
     """
@@ -94,11 +78,10 @@ def parse_response(text):
 
     return "ambiguous"
 
-
 def main(model_path, accident_folder):
     # --- A. INIT MODEL ---
     try:
-        model, processor = load_videollama3_model(model_path)
+        model, processor = load_qwen_model(model_path)
     except Exception as e:
         print(f"Failed to load model. Error: {e}")
         return
@@ -111,20 +94,22 @@ def main(model_path, accident_folder):
     valid_exts = ('.mp4', '.avi', '.mov', '.mkv')
     files = [f for f in os.listdir(accident_folder) if f.lower().endswith(valid_exts)]
     total_videos = len(files)
-
+    
     print(f"Found {total_videos} videos. Starting evaluation...")
 
     # --- C. PREPARE LOGGING ---
+    # Add timestamp to filename to prevent overwriting previous runs
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    csv_filename = f"videollama3_results_{timestamp}.csv"
-
+    csv_filename = f"qwen_results_{timestamp}.csv"
+    
     correct_count = 0
     missed_count = 0
     ambiguous_count = 0
     error_count = 0
-
+    
     print(f"Results will be saved to: {csv_filename}")
 
+    # Use 'utf-8-sig' for better compatibility with Excel (handles special chars correctly)
     with open(csv_filename, mode='w', newline='', encoding='utf-8-sig') as csv_file:
         fieldnames = ['filename', 'prediction', 'status', 'model_answer']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
@@ -136,32 +121,45 @@ def main(model_path, accident_folder):
             result_row = {}
 
             try:
-                # 1. Prepare conversation with video input
-                conversation = [
-                    {"role": "system", "content": "You are a helpful assistant."},
+                # 1. Prepare Message
+                messages = [
                     {
                         "role": "user",
                         "content": [
-                            {"type": "video", "video": {"video_path": video_path, "fps": 2, "max_frames": 64}},
+                            {
+                                "type": "video",
+                                "video": video_path,
+                                "fps": 2.0,
+                            },
                             {"type": "text", "text": "Are there any road accidents or anomalies in the video? Answer yes or no."},
                         ],
-                    },
+                    }
                 ]
 
-                # 2. Process inputs via the custom processor
-                inputs = processor(conversation=conversation, return_tensors="pt")
-                inputs = {k: v.cuda() if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
-                if "pixel_values" in inputs:
-                    inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
+                # 2. Process Inputs (Using apply_chat_template with tokenize=True)
+                inputs = processor.apply_chat_template(
+                    messages,
+                    tokenize=True,
+                    add_generation_prompt=True,
+                    return_dict=True,
+                    return_tensors="pt"
+                )
+                
+                # Move inputs to GPU
+                inputs = inputs.to(model.device)
 
                 # 3. Generate
                 with torch.no_grad():
-                    output_ids = model.generate(**inputs, max_new_tokens=128)
-
+                    generated_ids = model.generate(**inputs, max_new_tokens=128)
+                    
                 # 4. Decode
+                # Trim input tokens to get ONLY the new generated answer
+                generated_ids_trimmed = [
+                    out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+                ]
                 output_text = processor.batch_decode(
-                    output_ids, skip_special_tokens=True
-                )[0].strip()
+                    generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
+                )[0]
 
                 # 5. Evaluate
                 prediction = parse_response(output_text)
@@ -194,6 +192,7 @@ def main(model_path, accident_folder):
                 }
                 torch.cuda.empty_cache()
 
+            # Save immediately (flush ensures data is written even if script crashes)
             if result_row:
                 writer.writerow(result_row)
                 csv_file.flush()
@@ -222,14 +221,18 @@ def main(model_path, accident_folder):
         "========================================\n"
     )
 
-    with open("videollama3_summary_metrics.txt", "w") as f:
+    with open("qwen_summary_metrics.txt", "w") as f:
         f.write(summary_text)
 
     print(f"\n{summary_text}")
 
 
 if __name__ == "__main__":
-    MODEL_PATH = "DAMO-NLP-SG/VideoLLaMA3-7B"
-    ACCIDENT_FOLDER = "/home/z/zminghui/videos/target_adv_clean_v11"
+    parser = argparse.ArgumentParser(description="Qwen3-VL adversarial video evaluation")
+    parser.add_argument("--model_path", type=str, default="Qwen/Qwen3-VL-8B-Instruct",
+                        help="HuggingFace model ID or local path")
+    parser.add_argument("--video_dir", type=str, default="/home/z/zminghui/videos/target_adv_clean_v11",
+                        help="Directory containing adversarial videos to evaluate")
+    args = parser.parse_args()
 
-    main(MODEL_PATH, ACCIDENT_FOLDER)
+    main(args.model_path, args.video_dir)

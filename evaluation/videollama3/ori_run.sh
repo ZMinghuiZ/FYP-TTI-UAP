@@ -11,7 +11,8 @@
 
 # 1. Environment
 source ~/.bashrc
-conda activate videollama
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 
 # 2. Directory
 cd $SLURM_SUBMIT_DIR
@@ -20,6 +21,7 @@ mkdir -p logs
 echo "Job started on $(hostname) at $(date)"
 
 # 3. Run
-srun python eval_ori.py
+srun python "${REPO_ROOT}/evaluation/videollama3/eval_ori.py" \
+    --video_dir "${ADV_OUTPUT_DIR}"
 
 echo "Job finished at $(date)"

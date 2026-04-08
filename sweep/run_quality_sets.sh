@@ -44,14 +44,13 @@
 set -euo pipefail
 
 source ~/.bashrc
-conda activate videollama
-
-SCRIPT_DIR="/home/z/zminghui/ult_attack"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs
 
 # ── Paths & parallelism ──────────────────────────────────────────────────
-CLEAN_DIR="/home/z/zminghui/videos/eval/clean"
+CLEAN_DIR="${VIDEO_DIR_CLEAN}"
 SUMMARY_CSV="sweep/quality_summary.csv"
 MAX_PARALLEL="${MAX_PARALLEL:-4}"
 WORKERS_PER_DIR="${WORKERS_PER_DIR:-4}"
@@ -213,7 +212,7 @@ for i in "${!VALID_DIRS[@]}"; do
     tmp_csv="${TMP_DIR}/summary_${i}.csv"
     log_file="${LOG_DIR}/$(basename "$d").log"
 
-    python "${SCRIPT_DIR}/compute_quality.py" \
+    python "${REPO_ROOT}/analysis/compute_quality.py" \
         --clean_dir "$CLEAN_DIR" \
         --adv_dir "$d" \
         --workers "$WORKERS_PER_DIR" \

@@ -25,15 +25,15 @@
 set -euo pipefail
 
 source ~/.bashrc
-conda activate videollama
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 
-SCRIPT_DIR="/home/z/zminghui/ult_attack"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs
 
 # ── Paths ─────────────────────────────────────────────────────────────────
-VIDEO_DIR="/home/z/zminghui/videos/eval/clean"
-STATIC_PATCH="${SCRIPT_DIR}/static/000000.jpg"
+VIDEO_DIR="${VIDEO_DIR_CLEAN}"
+STATIC_PATCH="${REPO_ROOT}/static/000000.jpg"
 
 # ── Experiment config ─────────────────────────────────────────────────────
 RUN_NAME="EXP_static"
@@ -82,7 +82,7 @@ echo ">>> Step 1: Applying static UAP to videos ..."
 
 mkdir -p "$ADV_DIR"
 
-srun python "${SCRIPT_DIR}/apply_static_uap.py" \
+srun python "${REPO_ROOT}/attack/apply_static_uap.py" \
     --patch "$STATIC_PATCH" \
     --video_dir "$VIDEO_DIR" \
     --output_dir "$ADV_DIR" \
@@ -103,7 +103,7 @@ echo ">>> Evaluating on InternVL3 ..."
 cd "$ADV_DIR_ABS"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'internVL'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'internVL'))
 os.chdir('${ADV_DIR_ABS}')
 from eval_ori import main
 main('${INTERNVL_MODEL}', '${ADV_DIR_ABS}')
@@ -116,7 +116,7 @@ echo ">>> Evaluating on Qwen3-VL ..."
 cd "$ADV_DIR_ABS"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'qwen3'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'qwen3'))
 os.chdir('${ADV_DIR_ABS}')
 from eval_ori import main
 main('${QWEN_MODEL}', '${ADV_DIR_ABS}')
@@ -129,7 +129,7 @@ echo ">>> Evaluating on LLaVA-OneVision ..."
 cd "$ADV_DIR_ABS"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'llava_onevision'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'llava_onevision'))
 os.chdir('${ADV_DIR_ABS}')
 from eval_ori import main
 main('${LLAVA_MODEL}', '${ADV_DIR_ABS}')
@@ -142,7 +142,7 @@ echo ">>> Evaluating on VideoLLaMA3 ..."
 cd "$ADV_DIR_ABS"
 srun python -c "
 import sys, os
-sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..', 'videollama3'))
+sys.path.insert(0, os.path.join('${REPO_ROOT}', 'evaluation', 'videollama3'))
 os.chdir('${ADV_DIR_ABS}')
 from eval_ori import main
 main('${VIDEOLLAMA3_MODEL}', '${ADV_DIR_ABS}')

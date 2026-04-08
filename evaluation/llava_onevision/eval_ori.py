@@ -1,3 +1,4 @@
+import argparse
 import os
 import csv
 import torch
@@ -234,7 +235,11 @@ def main(model_path, accident_folder):
 
 
 if __name__ == "__main__":
-    MODEL_PATH = "llava-hf/llava-onevision-qwen2-7b-ov-hf"
-    ACCIDENT_FOLDER = "/home/z/zminghui/videos/target_adv_clean_v11"
+    parser = argparse.ArgumentParser(description="LLaVA-OneVision adversarial video evaluation")
+    parser.add_argument("--model_path", type=str, default="llava-hf/llava-onevision-qwen2-7b-ov-hf",
+                        help="HuggingFace model ID or local path")
+    parser.add_argument("--video_dir", type=str, default="/home/z/zminghui/videos/target_adv_clean_v11",
+                        help="Directory containing adversarial videos to evaluate")
+    args = parser.parse_args()
 
-    main(MODEL_PATH, ACCIDENT_FOLDER)
+    main(args.model_path, args.video_dir)

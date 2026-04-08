@@ -41,16 +41,15 @@
 #   SLURM_ARRAY_TASK_ID=1 bash run_exp_event_verify.sh  # local test
 #
 # After ALL jobs finish, run the analysis:
-#   python analyse_event_verify.py --sweep_dir sweep/EXP_event_verify/ \
+#   python analysis/analyse_event_verify.py --sweep_dir sweep/EXP_event_verify/ \
 #       --output_csv sweep/EXP_event_verify/event_verify_comparison.csv
 # ══════════════════════════════════════════════════════════════════════════
 
 set -euo pipefail
 
 source ~/.bashrc
-conda activate videollama
-
-SCRIPT_DIR="/home/z/zminghui/ult_attack"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs
 
@@ -58,7 +57,7 @@ mkdir -p sweep/logs
 WORK_DIR="$(pwd)"
 G4_ADV_DIR="${WORK_DIR}/sweep/G4_a4-near-s8-high/adv_videos"
 S13_ADV_DIR="${WORK_DIR}/sweep/S13_no-temporal-small/adv_videos"
-CLEAN_DIR="/home/z/zminghui/videos/eval/clean"
+CLEAN_DIR="${VIDEO_DIR_CLEAN}"
 
 RESULTS_DIR="${WORK_DIR}/sweep/EXP_event_verify"
 mkdir -p "${RESULTS_DIR}"
@@ -114,7 +113,7 @@ echo ""
 # Run single (model, condition) eval
 # ══════════════════════════════════════════════════════════════════════════
 
-srun python "${SCRIPT_DIR}/eval_event_verify.py" \
+srun python "${REPO_ROOT}/evaluation/eval_event_verify.py" \
     --model "$MODEL" \
     --video_dir "$VIDEO_DIR" \
     --output_dir "$OUT_DIR" \
@@ -126,6 +125,6 @@ echo "Task ${TASK_ID} (${MODEL} × ${CONDITION}) finished at $(date)"
 echo "Results in: ${OUT_DIR}/"
 echo ""
 echo "When ALL array tasks are done, run analysis:"
-echo "  python analyse_event_verify.py --sweep_dir sweep/EXP_event_verify/ \\"
+echo "  python analysis/analyse_event_verify.py --sweep_dir sweep/EXP_event_verify/ \\"
 echo "    --output_csv sweep/EXP_event_verify/event_verify_comparison.csv"
 echo "=============================================="

@@ -25,15 +25,14 @@
 set -euo pipefail
 
 source ~/.bashrc
-conda activate videollama
-
-SCRIPT_DIR="/home/z/zminghui/ult_attack"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs
 
 # ── Paths ─────────────────────────────────────────────────────────────────
-IMAGE_DIR="/home/z/zminghui/traffic_images/normal_train"
-TEMPORAL_PT="${SCRIPT_DIR}/accident_temporal.pt"
+IMAGE_DIR="${IMAGE_DIR_NORMAL}"
+TEMPORAL_PT="${REPO_ROOT}/accident_temporal.pt"
 
 # ── Shared fixed parameters (from sweep findings) ────────────────────────
 CLIP_MODELS=(ViT-L-14 EVA02-L-14 ViT-SO400M-14-SigLIP)
@@ -115,7 +114,7 @@ echo ""
 # ══════════════════════════════════════════════════════════════════════════
 echo ">>> Training UAP for ${RUN_NAME} ..."
 
-srun python "${SCRIPT_DIR}/btc_attack.py" \
+srun python "${REPO_ROOT}/attack/btc_attack.py" \
     --image_dir "$IMAGE_DIR" \
     --output "$UAP_PATH" \
     --clip_models "${CLIP_MODELS[@]}" \

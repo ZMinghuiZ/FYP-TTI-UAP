@@ -1,3 +1,4 @@
+import argparse
 import os
 import csv
 import numpy as np
@@ -307,8 +308,11 @@ def main(model_path, accident_folder):
     print(f"\n{summary_text}")
 
 if __name__ == "__main__":
-    # Update this path if needed
-    MODEL_PATH = 'OpenGVLab/InternVL3-38B' 
-    ACCIDENT_FOLDER = '/home/z/zminghui/videos/target_adv_clean_v11' 
-    
-    main(MODEL_PATH, ACCIDENT_FOLDER)
+    parser = argparse.ArgumentParser(description="InternVL adversarial video evaluation")
+    parser.add_argument("--model_path", type=str, default="OpenGVLab/InternVL3-38B",
+                        help="HuggingFace model ID or local path")
+    parser.add_argument("--video_dir", type=str, default="/home/z/zminghui/videos/target_adv_clean_v11",
+                        help="Directory containing adversarial videos to evaluate")
+    args = parser.parse_args()
+
+    main(args.model_path, args.video_dir)

@@ -42,7 +42,7 @@
 #   SLURM_ARRAY_TASK_ID=1 bash run_exp_descriptive.sh  # local test
 #
 # After ALL jobs finish, run the analysis:
-#   python analyse_responses.py --sweep_dir sweep/EXP_descriptive/ \
+#   python analysis/analyse_responses.py --sweep_dir sweep/EXP_descriptive/ \
 #       --output_csv sweep/EXP_descriptive/descriptive_comparison.csv \
 #       --output_details sweep/EXP_descriptive/descriptive_per_video.csv \
 #       --verbose
@@ -51,9 +51,8 @@
 set -euo pipefail
 
 source ~/.bashrc
-conda activate videollama
-
-SCRIPT_DIR="/home/z/zminghui/ult_attack"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+conda activate "${CONDA_ENV}"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs
 
@@ -61,7 +60,7 @@ mkdir -p sweep/logs
 WORK_DIR="$(pwd)"
 G4_ADV_DIR="${WORK_DIR}/sweep/G4_a4-near-s8-high/adv_videos"
 S13_ADV_DIR="${WORK_DIR}/sweep/S13_no-temporal-small/adv_videos"
-CLEAN_DIR="/home/z/zminghui/videos/eval/clean"
+CLEAN_DIR="${VIDEO_DIR_CLEAN}"
 
 RESULTS_DIR="${WORK_DIR}/sweep/EXP_descriptive"
 mkdir -p "${RESULTS_DIR}"
@@ -117,7 +116,7 @@ echo ""
 # Run single (model, condition) eval
 # ══════════════════════════════════════════════════════════════════════════
 
-srun python "${SCRIPT_DIR}/eval_descriptive.py" \
+srun python "${REPO_ROOT}/evaluation/eval_descriptive.py" \
     --model "$MODEL" \
     --video_dir "$VIDEO_DIR" \
     --output_dir "$OUT_DIR" \
@@ -129,7 +128,7 @@ echo "Task ${TASK_ID} (${MODEL} × ${CONDITION}) finished at $(date)"
 echo "Results in: ${OUT_DIR}/"
 echo ""
 echo "When ALL array tasks are done, run analysis:"
-echo "  python analyse_responses.py --sweep_dir sweep/EXP_descriptive/ \\"
+echo "  python analysis/analyse_responses.py --sweep_dir sweep/EXP_descriptive/ \\"
 echo "    --output_csv sweep/EXP_descriptive/descriptive_comparison.csv \\"
 echo "    --output_details sweep/EXP_descriptive/descriptive_per_video.csv \\"
 echo "    --verbose"
