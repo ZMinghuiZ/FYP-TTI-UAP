@@ -1,5 +1,0 @@
-﻿model,name,n,asr,avg_words,avg_len,avg_temporal,avg_accident_affirmed,avg_accident_negated,avg_event,avg_benign,per100w_temporal,per100w_accident,per100w_event,has_temporal_frac,has_accident_frac,has_event_frac,has_benign_frac
-InternVL3,G4_temporal_f0_internvl,174,nan,18.8506,88.3851,0.0172,1.3966,0.2414,0.1724,0.0000,0.0538,7.1813,0.7168,0.0172,0.8736,0.1724,0.0000
-LLaVA-OV,G4_temporal_f0_llava,172,nan,18.9128,99.9651,0.0000,2.2267,0.2093,0.0058,0.0000,0.0000,11.3936,0.0242,0.0000,0.8837,0.0058,0.0000
-Qwen3-VL,G4_temporal_f0_qwen3,174,nan,61.7586,349.0057,0.0287,3.0230,1.1092,0.2529,0.6034,0.0403,5.7583,0.3227,0.0287,0.6954,0.1667,0.3563
-VideoLLaMA3,G4_temporal_f0_videollama3,173,nan,28.0520,145.4277,0.0000,1.5202,0.8671,0.0751,0.1908,0.0000,4.8853,0.1437,0.0000,0.5896,0.0751,0.1503
