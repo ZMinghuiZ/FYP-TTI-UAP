@@ -15,9 +15,9 @@ Statistical design:
 
 Event classification (for interaction analysis):
   - Temporal (require cross-frame perception): loss_of_control, overturn
-  - Spatial  (single-frame perceivable):       collision, fire_smoke
+  - Spatial  (single-frame perceivable):       fire_smoke
   - Artifact (direct perturbation detection):  visual_artifacts
-  - Ambiguous:                                 pedestrian
+  - Ambiguous:                                 pedestrian, collision
 
 Usage:
     python analyse_event_verify.py --sweep_dir sweep/EXP_event_verify/
