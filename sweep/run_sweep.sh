@@ -149,8 +149,7 @@ srun python "${REPO_ROOT}/attack/apply_uap.py" \
     --uap "$UAP_PATH" \
     --video_dir "$VIDEO_DIR" \
     --output_dir "$ADV_DIR" \
-    --stretch "$STRETCH" \
-    --lossless
+    --stretch "$STRETCH"
 
 echo ""
 echo "Adversarial videos saved to ${ADV_DIR}"

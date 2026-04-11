@@ -86,8 +86,7 @@ Apply a trained UAP to every video in a directory. The perturbation cycles over 
 | `--output_dir` | `./adversarial_videos` | Output directory |
 | `--codec` | `mp4v` | OpenCV codec fallback |
 | `--ext` | `.mp4` | Output extension |
-| `--crf` | `0` | FFmpeg CRF (0 = near-lossless) |
-| `--lossless` | off | FFmpeg lossless H.264 mode |
+| `--crf` | `23` | FFmpeg CRF (0 = best, 23 = default) |
 | `--smooth_sigma` | `0.0` | Temporal Gaussian smoothing sigma |
 | `--stretch` | `1` | Temporal stretch factor (interpolation) |
 | `--scale` | `1.0` | Perturbation amplitude scale |

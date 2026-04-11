@@ -133,7 +133,8 @@ python attack/apply_uap.py \
     --uap btc_uap.pt \
     --video_dir "$VIDEO_DIR_CLEAN" \
     --output_dir adversarial_videos \
-    --stretch 4 --lossless
+    --stretch 4 \
+    --crf 23
 ```
 
 Or submit the full pipeline as a SLURM job:

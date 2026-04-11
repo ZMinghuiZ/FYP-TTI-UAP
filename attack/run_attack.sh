@@ -99,16 +99,15 @@ srun python "${REPO_ROOT}/attack/btc_attack.py" \
     --di_prob 0.5
 
 # ══════════════════════════════════════════════════════════════════════════
-# Step 2: Apply UAP to videos (LOSSLESS encoding)
+# Step 2: Apply UAP to videos
 # ══════════════════════════════════════════════════════════════════════════
 echo ""
-echo ">>> Step 2: Applying UAP to videos (lossless) ..."
+echo ">>> Step 2: Applying UAP to videos ..."
 srun python "${REPO_ROOT}/attack/apply_uap.py" \
     --uap ./btc_uap.pt \
     --video_dir "${VIDEO_DIR_CLEAN}" \
     --output_dir "${ADV_OUTPUT_DIR}" \
-    --stretch 4 \
-    --lossless
+    --stretch 4
 
 echo ""
 echo "=============================================="

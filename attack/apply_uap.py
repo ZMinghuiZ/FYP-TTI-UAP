@@ -126,14 +126,10 @@ def parse_args():
                     help="FourCC codec for output videos (default: mp4v)")
     p.add_argument("--ext", type=str, default=".mp4",
                     help="Output file extension (default: .mp4)")
-    p.add_argument("--crf", type=int, default=0,
+    p.add_argument("--crf", type=int, default=23,
                     help="H.264 CRF quality when using ffmpeg "
-                         "(0=lossless, 23=default, 51=worst). "
-                         "Lower = better quality, larger files (default: 0)")
-    p.add_argument("--lossless", action="store_true",
-                    help="Use lossless encoding to preserve perturbation exactly. "
-                         "Tries FFV1 codec first, falls back to PNG frames + "
-                         "ffmpeg reassembly. Overrides --codec and --ext.")
+                         "(0=best, 23=default, 51=worst). "
+                         "Lower = better quality, larger files (default: 23)")
 
     # Temporal smoothing for imperceptibility
     p.add_argument("--smooth_sigma", type=float, default=0.0,
@@ -193,18 +189,12 @@ def find_videos(video_dir):
     return videos
 
 
-def create_video_writer(output_path, codec, fps, width, height, lossless=False):
+def create_video_writer(output_path, codec, fps, width, height):
     """
     Try to create a working VideoWriter with the given codec.
     Falls back through several codecs if the requested one fails.
-
-    When lossless=True, prioritises FFV1 (lossless intra-frame codec) to
-    preserve the adversarial perturbation exactly through the video pipeline.
     """
-    if lossless:
-        codecs_to_try = ["FFV1", codec]
-    else:
-        codecs_to_try = [codec]
+    codecs_to_try = [codec]
 
     for fallback in ["avc1", "mp4v", "XVID", "MJPG"]:
         if fallback not in codecs_to_try:
@@ -235,13 +225,11 @@ def _ffmpeg_available():
     return shutil.which("ffmpeg") is not None
 
 
-def _open_ffmpeg_writer(output_path, fps, width, height, crf=23, lossless=False):
+def _open_ffmpeg_writer(output_path, fps, width, height, crf=23):
     """Open an ffmpeg subprocess that accepts raw BGR frames via stdin.
 
     Uses H.264 with CRF-based quality control for proper compression.
     """
-    crf_val = 0 if lossless else crf
-    pix_fmt = "yuv444p" if lossless else "yuv420p"
     cmd = [
         "ffmpeg", "-y",
         "-f", "rawvideo", "-vcodec", "rawvideo",
@@ -249,8 +237,8 @@ def _open_ffmpeg_writer(output_path, fps, width, height, crf=23, lossless=False)
         "-s", f"{width}x{height}",
         "-r", str(fps),
         "-i", "-",
-        "-c:v", "libx264", "-crf", str(crf_val),
-        "-pix_fmt", pix_fmt,
+        "-c:v", "libx264", "-crf", str(crf),
+        "-pix_fmt", "yuv420p",
         str(output_path),
     ]
     return subprocess.Popen(cmd, stdin=subprocess.PIPE,
@@ -258,7 +246,7 @@ def _open_ffmpeg_writer(output_path, fps, width, height, crf=23, lossless=False)
 
 
 def apply_uap_to_video(video_path, delta_N_np, output_path, codec, N, stretch,
-                        lossless=False, crf=23):
+                        crf=23):
     """
     Read a video, add the (optionally smoothed) BTC-UAP, and write the result.
 
@@ -287,11 +275,11 @@ def apply_uap_to_video(video_path, delta_N_np, output_path, codec, N, stretch,
     if _ffmpeg_available():
         actual_output = actual_output.with_suffix(".mp4")
         ffmpeg_proc = _open_ffmpeg_writer(
-            actual_output, fps, width, height, crf=crf, lossless=lossless,
+            actual_output, fps, width, height, crf=crf,
         )
     else:
         writer, actual_output, used_codec = create_video_writer(
-            output_path, codec, fps, width, height, lossless=lossless,
+            output_path, codec, fps, width, height,
         )
         if writer is None:
             cap.release()
@@ -404,14 +392,12 @@ def main():
 
     # ── Test encoding ──
     if _ffmpeg_available():
-        mode = "lossless, CRF=0" if args.lossless else f"CRF={args.crf}"
-        print(f"Using ffmpeg for H.264 encoding ({mode}).\n")
+        print(f"Using ffmpeg for H.264 encoding (CRF={args.crf}).\n")
     else:
         print("ffmpeg not found, falling back to OpenCV VideoWriter …")
         test_file = out_dir / ("codec_test" + args.ext)
         test_writer, actual_test_file, test_codec = create_video_writer(
             test_file, args.codec, 30.0, 64, 64,
-            lossless=args.lossless,
         )
         if test_writer is None:
             print("ERROR: No working video codec found. Install ffmpeg or rebuild")
@@ -421,8 +407,7 @@ def main():
             test_writer.release()
             if actual_test_file is not None:
                 actual_test_file.unlink(missing_ok=True)
-            mode = "LOSSLESS" if (args.lossless and test_codec == "FFV1") else test_codec
-            print(f"Codec OK ({mode}).\n")
+            print(f"Codec OK ({test_codec}).\n")
 
     # ── Apply UAP to each video ──
     success = 0
@@ -432,7 +417,7 @@ def main():
 
         ok = apply_uap_to_video(
             video_path, delta_N_np, out_path, args.codec, N, args.stretch,
-            lossless=args.lossless, crf=args.crf,
+            crf=args.crf,
         )
         if ok:
             success += 1

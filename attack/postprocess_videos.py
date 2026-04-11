@@ -186,7 +186,7 @@ def parse_args():
                    help="Bilateral filter sigma in coordinate space (default: 75)")
 
     p.add_argument("--crf", type=int, default=23,
-                   help="H.264 CRF quality (0=lossless, 23=default, 51=worst)")
+                   help="H.264 CRF quality (0=best, 23=default, 51=worst)")
     p.add_argument("--seed", type=int, default=42,
                    help="Random seed for reproducible noise (default: 42)")
 

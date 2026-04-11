@@ -40,7 +40,7 @@ def parse_args():
     p.add_argument("--alpha", type=float, default=16 / 255,
                     help="Blending weight for the UAP (default: 16/255 ≈ 0.0627)")
     p.add_argument("--crf", type=int, default=23,
-                    help="H.264 CRF quality (0=lossless, 23=default, 51=worst)")
+                    help="H.264 CRF quality (0=best, 23=default, 51=worst)")
     p.add_argument("--ext", type=str, default=".mp4",
                     help="Output file extension (default: .mp4)")
 

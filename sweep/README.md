@@ -27,7 +27,7 @@ This directory manages hyperparameter sweeps for UAP training, application, post
 
 ### `run_sweep.sh`
 
-Full pipeline per sweep config: train UAP → apply (stretch 4, lossless) → evaluate all four VLMs.
+Full pipeline per sweep config: train UAP → apply (stretch 4) → evaluate all four VLMs.
 
 | SLURM Config | Value |
 |-------------|-------|
