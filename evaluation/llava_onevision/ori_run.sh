@@ -4,7 +4,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:h100-47:1
 #SBATCH --ntasks=1
-#SBATCH --mem=192G
+#SBATCH --mem=128G
 #SBATCH --time=48:00:00
 #SBATCH --output=logs/llava_ov_%j.out
 #SBATCH --error=logs/llava_ov_%j.err

@@ -4,7 +4,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:h100-96:1
 #SBATCH --ntasks=1
-#SBATCH --mem=192G
+#SBATCH --mem=128G
 #SBATCH --time=04:00:00
 #SBATCH --array=1-12
 #SBATCH --output=sweep/logs/grid_%A_%a.out

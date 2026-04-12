@@ -5,7 +5,7 @@
 #SBATCH --partition=gpu           # Partition (queue) name
 #SBATCH --gres=gpu:h100-47:1      # Request 1 A100 GPU (40GB)
 #SBATCH --ntasks=1
-#SBATCH --mem=192G                # System memory
+#SBATCH --mem=128G                # System memory
 #SBATCH --time=48:00:00           # Time limit (48 hours)
 
 # --- Logging (Critical for debugging) ---

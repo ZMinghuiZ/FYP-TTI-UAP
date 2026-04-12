@@ -4,7 +4,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:h100-96:1
 #SBATCH --ntasks=1
-#SBATCH --mem=192G
+#SBATCH --mem=128G
 #SBATCH --time=08:00:00
 #SBATCH --output=sweep/logs/temporal_abl_%A_%a.out
 #SBATCH --error=sweep/logs/temporal_abl_%A_%a.err

@@ -33,7 +33,7 @@ Full pipeline per sweep config: train UAP → apply (stretch 4) → evaluate all
 |-------------|-------|
 | Array | `1-10` (configs `S1`–`S10`) |
 | GPU | `h100-96:1` |
-| Memory | `192G` |
+| Memory | `128G` |
 | Time | `48:00:00` |
 
 ```bash

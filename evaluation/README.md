@@ -78,7 +78,7 @@ sbatch evaluation/run_exp_descriptive.sh
 |-------------|-------|
 | Partition | `gpu` |
 | GPU | `h100-96:1` |
-| Memory | `192G` |
+| Memory | `128G` |
 | Time | `04:00:00` |
 | Array | `1-12` |
 
@@ -130,10 +130,10 @@ sbatch evaluation/videollama3/ori_run.sh
 
 | Model | GPU | Memory | Time |
 |-------|-----|--------|------|
-| InternVL | h100-47:1 | 192G | 48h |
-| LLaVA-OV | h100-47:1 | 192G | 48h |
-| Qwen3 | a100-80:1 | 192G | 48h |
-| VideoLLaMA3 | h100-47:1 | 192G | 48h |
+| InternVL | h100-47:1 | 128G | 48h |
+| LLaVA-OV | h100-47:1 | 128G | 48h |
+| Qwen3 | a100-80:1 | 128G | 48h |
+| VideoLLaMA3 | h100-47:1 | 128G | 48h |
 
 ## Output Directory Convention
 

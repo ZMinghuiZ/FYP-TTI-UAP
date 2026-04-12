@@ -4,7 +4,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:h100-96:1
 #SBATCH --ntasks=1
-#SBATCH --mem=192G
+#SBATCH --mem=128G
 #SBATCH --time=48:00:00
 #SBATCH --output=logs/tti_%j.out
 #SBATCH --error=logs/tti_%j.err
