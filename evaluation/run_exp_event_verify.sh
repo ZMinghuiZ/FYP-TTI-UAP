@@ -48,7 +48,7 @@
 set -euo pipefail
 
 source ~/.bashrc
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/config.sh"
+source "${SLURM_SUBMIT_DIR}/config.sh"
 conda activate "${CONDA_ENV}"
 cd "${SLURM_SUBMIT_DIR:-.}"
 mkdir -p sweep/logs

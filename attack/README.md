@@ -166,3 +166,5 @@ SLURM job for the static-patch baseline experiment: applies `apply_static_uap.py
 Submit: `sbatch attack/run_exp_static.sh`
 
 Both scripts source `config.sh` at the repo root for path configuration.
+
+> **Important:** Always run `sbatch` from the repository root directory. The scripts use `$SLURM_SUBMIT_DIR` to locate `config.sh`.

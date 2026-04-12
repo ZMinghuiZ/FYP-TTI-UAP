@@ -96,7 +96,9 @@ pip install -r requirements.txt
 
 ### 1. Configure paths
 
-Edit `config.sh` to point at your data directories. All shell scripts source this file, so you only need to change paths in one place:
+Edit `config.sh` to point at your data directories. All shell scripts source this file, so you only need to change paths in one place.
+
+> **Important:** Always run `sbatch` from the repository root directory. The SLURM scripts use `$SLURM_SUBMIT_DIR` to locate `config.sh`, so submitting from a different directory will cause path resolution failures.
 
 ```bash
 # config.sh

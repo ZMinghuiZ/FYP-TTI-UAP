@@ -67,6 +67,8 @@ The `visual_artifacts` column serves as a temporal/artifact detection probe.
 
 All experiment scripts source `config.sh` at the repo root for path and environment configuration.
 
+> **Important:** Always submit SLURM jobs from the repository root directory (`FYP-TTI-UAP/`). The scripts use `$SLURM_SUBMIT_DIR` to locate `config.sh`, so submitting from a different directory will cause path resolution failures.
+
 ### `run_exp_descriptive.sh`
 
 Runs descriptive evaluation as a SLURM array job: 12 tasks = 4 models × 3 conditions (temporal adversarial, non-temporal adversarial, clean).

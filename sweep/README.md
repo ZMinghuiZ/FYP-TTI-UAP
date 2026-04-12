@@ -23,6 +23,8 @@ This directory manages hyperparameter sweeps for UAP training, application, post
                          summarize_temporal_ablation.py
 ```
 
+> **Important:** Always run `sbatch` from the repository root directory. The scripts use `$SLURM_SUBMIT_DIR` to locate `config.sh`.
+
 ## Shell Scripts
 
 ### `run_sweep.sh`

@@ -21,7 +21,7 @@ mkdir -p logs
 # 2. Load Modules & Activate Environment (Adjust names as needed)
 # module load cuda/11.8 
 source ~/.bashrc
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/config.sh"
+source "${SLURM_SUBMIT_DIR}/config.sh"
 conda activate "${CONDA_ENV}"
 
 # --- Execution ---
