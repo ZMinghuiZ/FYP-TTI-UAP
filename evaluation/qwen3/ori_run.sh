@@ -2,7 +2,7 @@
 
 #SBATCH -J qwenVL_Eval
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:a100-80:1
+#SBATCH --gres=gpu:h100-96:1
 #SBATCH --ntasks=1
 #SBATCH --mem=128G
 #SBATCH --time=48:00:00

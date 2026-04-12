@@ -132,7 +132,7 @@ sbatch evaluation/videollama3/ori_run.sh
 |-------|-----|--------|------|
 | InternVL | h100-47:1 | 128G | 48h |
 | LLaVA-OV | h100-47:1 | 128G | 48h |
-| Qwen3 | a100-80:1 | 128G | 48h |
+| Qwen3 | h100-96:1 | 128G | 48h |
 | VideoLLaMA3 | h100-47:1 | 128G | 48h |
 
 ## Output Directory Convention
