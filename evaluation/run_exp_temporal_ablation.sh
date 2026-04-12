@@ -14,7 +14,7 @@
 # ══════════════════════════════════════════════════════════════════════════
 # Parameterized via environment variables (defaults to G4 at stretch=12):
 #
-#   UAP_PATH   – path to trained btc_uap.pt   (default: G4)
+#   UAP_PATH   – path to trained tti_uap.pt   (default: G4)
 #   RUN_TAG    – prefix for output dirs        (default: empty = legacy naming)
 #   STRETCHES  – space-separated stretch list  (default: "12")
 #
@@ -31,15 +31,15 @@
 #   sbatch --array=1-5 run_exp_temporal_ablation.sh
 #
 #   # S13 at stretch=12 and stretch=24 (10 tasks)
-#   UAP_PATH=sweep/S13_no-temporal-small/btc_uap.pt RUN_TAG=S13 STRETCHES="12 24" \
+#   UAP_PATH=sweep/S13_no-temporal-small/tti_uap.pt RUN_TAG=S13 STRETCHES="12 24" \
 #     sbatch --array=1-10 run_exp_temporal_ablation.sh
 #
 #   # Any config at a single stretch
-#   UAP_PATH=sweep/G7_some-config/btc_uap.pt RUN_TAG=G7 STRETCHES="12" \
+#   UAP_PATH=sweep/G7_some-config/tti_uap.pt RUN_TAG=G7 STRETCHES="12" \
 #     sbatch --array=1-5 run_exp_temporal_ablation.sh
 #
 #   # Local test
-#   UAP_PATH=sweep/G4_a4-near-s8-high/btc_uap.pt SLURM_ARRAY_TASK_ID=1 \
+#   UAP_PATH=sweep/G4_a4-near-s8-high/tti_uap.pt SLURM_ARRAY_TASK_ID=1 \
 #     bash run_exp_temporal_ablation.sh
 # ══════════════════════════════════════════════════════════════════════════
 
@@ -53,7 +53,7 @@ mkdir -p sweep/logs
 
 # ── Configurable paths (override via environment) ─────────────────────────
 VIDEO_DIR="${VIDEO_DIR_CLEAN}"
-UAP_PATH="${UAP_PATH:-sweep/G4_a4-near-s8-high/btc_uap.pt}"
+UAP_PATH="${UAP_PATH:-sweep/G4_a4-near-s8-high/tti_uap.pt}"
 RUN_TAG="${RUN_TAG:-}"
 CRF=23
 

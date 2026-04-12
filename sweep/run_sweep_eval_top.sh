@@ -73,7 +73,7 @@ fi
 WORK_DIR="$(pwd)"
 RUN_DIR="sweep/${RUN_NAME}"
 ADV_DIR="${RUN_DIR}/adv_videos"
-UAP_PATH="${RUN_DIR}/btc_uap.pt"
+UAP_PATH="${RUN_DIR}/tti_uap.pt"
 EVAL_CWD="${WORK_DIR}/${RUN_DIR}"
 ADV_DIR_ABS="${WORK_DIR}/${ADV_DIR}"
 

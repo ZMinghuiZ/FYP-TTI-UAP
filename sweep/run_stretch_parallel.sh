@@ -75,7 +75,7 @@ COMBO_TAG="stretch${STRETCH}_scale${SCALE}"
 
 WORK_DIR="$(pwd)"
 RUN_DIR="sweep/${RUN_NAME}"
-UAP_PATH="${RUN_DIR}/btc_uap.pt"
+UAP_PATH="${RUN_DIR}/tti_uap.pt"
 ADV_DIR="${RUN_DIR}/adv_videos_${COMBO_TAG}"
 ADV_DIR_ABS="${WORK_DIR}/${ADV_DIR}"
 

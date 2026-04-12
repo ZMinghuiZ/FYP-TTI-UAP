@@ -81,7 +81,7 @@ read -r RUN_NAME ALPHA IMAGE_SIZE DI_PROB DI_SCALE_LOW LAMBDA_NEG LAMBDA_TRAJ LA
 WORK_DIR="$(pwd)"
 RUN_DIR="sweep/${RUN_NAME}"
 ADV_DIR="${RUN_DIR}/adv_videos"
-UAP_PATH="${RUN_DIR}/btc_uap.pt"
+UAP_PATH="${RUN_DIR}/tti_uap.pt"
 EVAL_CWD="${WORK_DIR}/${RUN_DIR}"
 ADV_DIR_ABS="${WORK_DIR}/${ADV_DIR}"
 
@@ -115,7 +115,7 @@ if [ "$LAMBDA_TRAJ" != "0.0" ] || [ "$LAMBDA_TRANS" != "0.0" ]; then
     TEMPORAL_ARGS="--accident_temporal ${TEMPORAL_PT}"
 fi
 
-srun python "${REPO_ROOT}/attack/btc_attack.py" \
+srun python "${REPO_ROOT}/attack/tti_attack.py" \
     --image_dir "$IMAGE_DIR" \
     --output "$UAP_PATH" \
     --clip_models "${CLIP_MODELS[@]}" \

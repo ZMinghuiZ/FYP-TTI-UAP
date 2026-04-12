@@ -7,14 +7,14 @@ This directory contains the full pipeline for training, applying, and visualisin
 ```
 precompute_accident_temporal.py   →  accident_temporal.pt
                                            ↓
-btc_attack.py  ←  normal images    →  btc_uap.pt
+tti_attack.py  ←  normal images    →  tti_uap.pt
                                            ↓
 apply_uap.py  ←  clean videos     →  adversarial videos
                                            ↓  (optional)
 postprocess_videos.py              →  degraded adversarial videos
 
 apply_static_uap.py  ←  patch image  →  static-baseline adversarial videos
-visualise_uap.py  ←  btc_uap.pt      →  per-frame PNGs + grid images
+visualise_uap.py  ←  tti_uap.pt      →  per-frame PNGs + grid images
 ```
 
 ## Scripts
@@ -39,7 +39,7 @@ Build accident temporal templates from accident training videos. For each CLIP m
 
 ---
 
-### `btc_attack.py`
+### `tti_attack.py`
 
 Core training script. Learns an *N*-frame universal perturbation optimised with a CLIP ensemble. Loss components:
 
@@ -52,7 +52,7 @@ Uses DI-FGSM input diversity and MI-FGSM momentum.
 | Argument | Default | Description |
 |----------|---------|-------------|
 | `--image_dir` | *required* | Normal (non-accident) training images |
-| `--output` | `./btc_uap.pt` | Output UAP tensor `(N, C, H, W)` |
+| `--output` | `./tti_uap.pt` | Output UAP tensor `(N, C, H, W)` |
 | `--epsilon` | `16/255` | L∞ perturbation bound |
 | `--alpha` | `2/255` | PGD step size |
 | `--N` | `32` | Temporal length of UAP |
@@ -154,7 +154,7 @@ Inspection utility: save per-frame PNGs (raw + amplified) and grid images from a
 SLURM job for the full TTI-UAP pipeline:
 
 1. Pre-compute temporal templates (if `accident_temporal.pt` is missing)
-2. Train UAP via `btc_attack.py`
+2. Train UAP via `tti_attack.py`
 3. Apply UAP via `apply_uap.py`
 
 Submit: `sbatch attack/run_attack.sh`

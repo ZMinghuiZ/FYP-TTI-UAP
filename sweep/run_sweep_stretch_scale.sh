@@ -76,7 +76,7 @@ fi
 
 WORK_DIR="$(pwd)"
 RUN_DIR="sweep/${RUN_NAME}"
-UAP_PATH="${RUN_DIR}/btc_uap.pt"
+UAP_PATH="${RUN_DIR}/tti_uap.pt"
 
 echo "=============================================="
 echo "Stretch × Scale Sweep"

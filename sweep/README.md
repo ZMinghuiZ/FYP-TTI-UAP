@@ -182,7 +182,7 @@ python sweep/summarize_temporal_ablation.py --csv --stretch 12 --source G4
 sweep/
 ├── S1_…/ … S10_…/           # Original sweep runs
 ├── G1_…/ … G12_…/           # Grid search runs
-│   ├── btc_uap.pt
+│   ├── tti_uap.pt
 │   ├── adv_videos/
 │   ├── adv_videos_stretch*_scale*/
 │   ├── grid_config.txt

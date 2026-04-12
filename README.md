@@ -13,9 +13,9 @@ flowchart LR
     A[Normal Images] --> B[precompute_accident_temporal.py]
     C[Accident Videos] --> B
     B --> D[accident_temporal.pt]
-    A --> E[btc_attack.py]
+    A --> E[tti_attack.py]
     D --> E
-    E --> F[btc_uap.pt]
+    E --> F[tti_uap.pt]
     F --> G[apply_uap.py]
     H[Clean Test Videos] --> G
     G --> I[Adversarial Videos]
@@ -40,7 +40,7 @@ FYP-TTI-UAP/
 │
 ├── attack/                         # UAP generation and application
 │   ├── precompute_accident_temporal.py
-│   ├── btc_attack.py
+│   ├── tti_attack.py
 │   ├── apply_uap.py
 │   ├── apply_static_uap.py
 │   ├── postprocess_videos.py
@@ -118,9 +118,9 @@ python attack/precompute_accident_temporal.py \
     --clip_pretrained_list openai merged2b_s4b_b131k webli
 
 # Train the UAP
-python attack/btc_attack.py \
+python attack/tti_attack.py \
     --image_dir "$IMAGE_DIR_NORMAL" \
-    --output btc_uap.pt \
+    --output tti_uap.pt \
     --clip_models ViT-L-14 EVA02-L-14 ViT-SO400M-14-SigLIP \
     --clip_pretrained_list openai merged2b_s4b_b131k webli \
     --target_texts \
@@ -130,7 +130,7 @@ python attack/btc_attack.py \
 
 # Apply to test videos
 python attack/apply_uap.py \
-    --uap btc_uap.pt \
+    --uap tti_uap.pt \
     --video_dir "$VIDEO_DIR_CLEAN" \
     --output_dir adversarial_videos \
     --stretch 4 \

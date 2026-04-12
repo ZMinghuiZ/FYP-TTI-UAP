@@ -113,7 +113,7 @@ sbatch --array=1-5 evaluation/run_exp_temporal_ablation.sh
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `UAP_PATH` | `sweep/G4_a4-near-s8-high/btc_uap.pt` | UAP to ablate |
+| `UAP_PATH` | `sweep/G4_a4-near-s8-high/tti_uap.pt` | UAP to ablate |
 | `RUN_TAG` | (empty) | Tag for output directory naming |
 | `STRETCHES` | `12` | Space-separated stretch values |
 

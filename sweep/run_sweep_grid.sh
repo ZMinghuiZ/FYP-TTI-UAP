@@ -90,7 +90,7 @@ read -r RUN_NAME ALPHA LAMBDA_TRAJ LAMBDA_TRANS EPOCHS \
     <<< "${CONFIGS[$TASK_ID]}"
 
 RUN_DIR="sweep/${RUN_NAME}"
-UAP_PATH="${RUN_DIR}/btc_uap.pt"
+UAP_PATH="${RUN_DIR}/tti_uap.pt"
 
 mkdir -p "$RUN_DIR"
 
@@ -114,7 +114,7 @@ echo ""
 # ══════════════════════════════════════════════════════════════════════════
 echo ">>> Training UAP for ${RUN_NAME} ..."
 
-srun python "${REPO_ROOT}/attack/btc_attack.py" \
+srun python "${REPO_ROOT}/attack/tti_attack.py" \
     --image_dir "$IMAGE_DIR" \
     --output "$UAP_PATH" \
     --clip_models "${CLIP_MODELS[@]}" \

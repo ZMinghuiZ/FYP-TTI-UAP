@@ -6,8 +6,8 @@
 #SBATCH --ntasks=1
 #SBATCH --mem=192G
 #SBATCH --time=48:00:00
-#SBATCH --output=logs/btc_%j.out
-#SBATCH --error=logs/btc_%j.err
+#SBATCH --output=logs/tti_%j.out
+#SBATCH --error=logs/tti_%j.err
 
 
 source ~/.bashrc
@@ -64,9 +64,9 @@ fi
 #   L_traj  : trajectory matching against accident temporal template
 #   L_trans : inter-frame transition pattern matching
 echo ">>> Step 1: Training TTI-UAP ..."
-srun python "${REPO_ROOT}/attack/btc_attack.py" \
+srun python "${REPO_ROOT}/attack/tti_attack.py" \
     --image_dir "${IMAGE_DIR_NORMAL}" \
-    --output ./btc_uap.pt \
+    --output ./tti_uap.pt \
     --clip_models \
         ViT-L-14 \
         EVA02-L-14 \
@@ -104,7 +104,7 @@ srun python "${REPO_ROOT}/attack/btc_attack.py" \
 echo ""
 echo ">>> Step 2: Applying UAP to videos ..."
 srun python "${REPO_ROOT}/attack/apply_uap.py" \
-    --uap ./btc_uap.pt \
+    --uap ./tti_uap.pt \
     --video_dir "${VIDEO_DIR_CLEAN}" \
     --output_dir "${ADV_OUTPUT_DIR}" \
     --stretch 4

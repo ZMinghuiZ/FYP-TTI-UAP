@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Visualise a BTC-UAP .pt file as images.
+Visualise a TTI-UAP .pt file as images.
 
 Saves:
   - Individual frames as PNGs (one per UAP frame)
@@ -12,7 +12,7 @@ nearly invisible. The amplified version scales them to fill the full [0, 255]
 range so you can actually see the noise patterns.
 
 Usage:
-    python visualise_uap.py --uap btc_uap.pt --output_dir ./uap_vis
+    python visualise_uap.py --uap tti_uap.pt --output_dir ./uap_vis
 """
 
 import argparse
@@ -25,9 +25,9 @@ from PIL import Image
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Visualise BTC-UAP as images")
+    p = argparse.ArgumentParser(description="Visualise TTI-UAP as images")
     p.add_argument("--uap", type=str, required=True,
-                    help="Path to BTC-UAP tensor (.pt file)")
+                    help="Path to TTI-UAP tensor (.pt file)")
     p.add_argument("--output_dir", type=str, default="./uap_vis",
                     help="Output directory for images (default: ./uap_vis)")
     p.add_argument("--amplify", type=float, default=10.0,
@@ -76,7 +76,7 @@ def main():
     args = parse_args()
 
     # Load UAP
-    print(f"Loading BTC-UAP from {args.uap} ...")
+    print(f"Loading TTI-UAP from {args.uap} ...")
     delta_N = torch.load(args.uap, map_location="cpu", weights_only=True)
     N = delta_N.shape[0]
     print(f"  Shape: {list(delta_N.shape)}  (N={N})")

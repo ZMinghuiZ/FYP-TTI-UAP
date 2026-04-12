@@ -16,14 +16,14 @@ passes, giving each frame 32x more gradient signal than the previous
 single-frame-per-image approach.
 
 Usage:
-    python btc_attack.py \\
+    python tti_attack.py \\
         --image_dir /path/to/normal/images \\
         --clip_models ViT-L-14 EVA02-L-14 ViT-SO400M-14-SigLIP \\
         --clip_pretrained_list openai merged2b_s4b_b131k webli \\
         --target_texts "Yes, there is a road accident" \\
         --negative_texts "normal traffic flow" \\
         --accident_temporal ./accident_temporal.pt \\
-        --output btc_uap.pt
+        --output tti_uap.pt
 """
 
 import argparse
@@ -208,7 +208,7 @@ def parse_args():
 
     p.add_argument("--image_dir", type=str, required=True,
                    help="Directory of normal (non-accident) images")
-    p.add_argument("--output", type=str, default="./btc_uap.pt",
+    p.add_argument("--output", type=str, default="./tti_uap.pt",
                    help="Output path for UAP tensor (.pt)")
 
     p.add_argument("--epsilon", type=float, default=16 / 255,
