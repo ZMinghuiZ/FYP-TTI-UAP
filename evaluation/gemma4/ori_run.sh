@@ -12,7 +12,7 @@
 # 1. Environment
 source ~/.bashrc
 source "${SLURM_SUBMIT_DIR}/config.sh"
-conda activate "${CONDA_ENV}"
+conda activate gemma4
 
 # 3. Directory
 cd $SLURM_SUBMIT_DIR
