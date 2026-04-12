@@ -194,6 +194,19 @@ sbatch evaluation/gemma4/ori_run.sh
 | VideoLLaMA3 | h100-47:1 | 128G | 48h |
 | Gemma4 | h100-96:1 | 128G | 48h |
 
+> **Gemma 4 Environment:** Gemma 4 requires `transformers >= 5.x` (with `Gemma4ForConditionalGeneration` support) and Python 3.10+, which is incompatible with the default `videollama` environment (Python 3.9). A separate conda environment is needed:
+>
+> ```bash
+> srun --mem=8G --time=00:30:00 --pty bash   # use a compute node if login node is memory-constrained
+> conda create -n gemma4 python=3.10 -y
+> conda activate gemma4
+> pip install torch torchvision --no-cache-dir
+> pip install git+https://github.com/huggingface/transformers.git --no-cache-dir
+> pip install torchcodec librosa accelerate --no-cache-dir
+> ```
+>
+> The `gemma4/ori_run.sh` script activates `gemma4` instead of the default `$CONDA_ENV`.
+
 ## Output Directory Convention
 
 - **Binary eval:** CSVs land in the process working directory (controlled by the SLURM script's `cd`)
