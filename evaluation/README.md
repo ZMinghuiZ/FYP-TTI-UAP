@@ -10,6 +10,7 @@ This directory contains scripts for evaluating adversarial videos against Video 
 | LLaVA-OneVision-7B | `llava-hf/llava-onevision-qwen2-7b-ov-hf` | `llava_onevision/` |
 | Qwen3-VL-8B | `Qwen/Qwen3-VL-8B-Instruct` | `qwen3/` |
 | VideoLLaMA3-7B | `DAMO-NLP-SG/VideoLLaMA3-7B` | `videollama3/` |
+| Gemma-4-31B | `google/gemma-4-31B-it` | `gemma4/` |
 
 The unified scripts (`eval_descriptive.py`, `eval_event_verify.py`) also support Qwen3-VL-30B-A3B (`Qwen/Qwen3-VL-30B-A3B-Instruct`) as the default for Qwen.
 
@@ -180,6 +181,7 @@ sbatch evaluation/internVL/ori_run.sh
 sbatch evaluation/llava_onevision/ori_run.sh
 sbatch evaluation/qwen3/ori_run.sh
 sbatch evaluation/videollama3/ori_run.sh
+sbatch evaluation/gemma4/ori_run.sh
 ```
 
 | Model | GPU | Memory | Time |
@@ -188,6 +190,7 @@ sbatch evaluation/videollama3/ori_run.sh
 | LLaVA-OV | h100-47:1 | 128G | 48h |
 | Qwen3 | h100-96:1 | 128G | 48h |
 | VideoLLaMA3 | h100-47:1 | 128G | 48h |
+| Gemma4 | h100-96:1 | 128G | 48h |
 
 ## Output Directory Convention
 
