@@ -82,6 +82,33 @@ sbatch evaluation/run_exp_descriptive.sh
 | Time | `04:00:00` |
 | Array | `1-12` |
 
+#### Post-Experiment: Analyse Descriptive Responses
+
+After all 12 SLURM tasks complete, run `analysis/analyse_responses.py` to extract keyword-level statistics from the open-ended model answers. The script counts temporal-abnormal, accident (with negation awareness), event-descriptor, and benign keywords per response, then compares conditions with Mann–Whitney U tests.
+
+**CLI:**
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--sweep_dir` | `sweep/` | Root directory to scan for `*_results_*.csv` (use `sweep/EXP_descriptive/` for this experiment) |
+| `--csv_files` | `None` | Explicit CSV paths (bypasses sweep scan) |
+| `--configs` | `None` | Filter to specific config names (default: all found) |
+| `--output_csv` | `None` | Save comparative summary table to this CSV path |
+| `--output_details` | `None` | Save per-video keyword analysis to this CSV path |
+| `--verbose` | off | Show more example responses in stdout |
+
+```bash
+python analysis/analyse_responses.py \
+    --sweep_dir sweep/EXP_descriptive/ \
+    --output_csv experiment_result/response_analysis.csv
+```
+
+**Stdout** prints per-condition statistics (response length, keyword frequencies, top matched words, example excerpts), a comparative summary table, and pairwise Mann–Whitney U tests between all condition pairs per model (requires n >= 20 in both groups).
+
+**Output CSV columns (`--output_csv`):** `model`, `name`, `n`, `asr`, `avg_words`, `avg_len`, `avg_temporal`, `avg_accident_affirmed`, `avg_accident_negated`, `avg_event`, `avg_benign`, `per100w_temporal`, `per100w_accident`, `per100w_event`, `has_temporal_frac`, `has_accident_frac`, `has_event_frac`, `has_benign_frac`.
+
+**Output CSV columns (`--output_details`):** per-video rows with `model`, `config`, `filename`, `prediction`, `word_count`, `temporal_count`, `accident_affirmed`, `accident_negated`, `event_count`, `benign_count`, matched keyword lists, and truncated answer text.
+
 ### `run_exp_event_verify.sh`
 
 Same 4 × 3 matrix as descriptive but runs `eval_event_verify.py`.
@@ -97,6 +124,33 @@ sbatch evaluation/run_exp_event_verify.sh
 | Memory | `128G` |
 | Time | `08:00:00` |
 | Array | `1-12` |
+
+#### Post-Experiment: Analyse Event Verification Results
+
+After all 12 SLURM tasks complete, run `analysis/analyse_event_verify.py` to compute per-event false-positive rates (FPR), run Fisher's exact tests with Holm–Bonferroni correction across conditions, and perform a temporal-vs-spatial interaction analysis that tests whether the temporal UAP specifically increases dynamic-event hallucination.
+
+**CLI:**
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--sweep_dir` | `sweep/EXP_event_verify/` | Directory containing config subdirs with CSVs |
+| `--csv_files` | `None` | Explicit CSV paths (bypasses sweep scan) |
+| `--output_csv` | `None` | Save FPR summary table to this CSV path |
+| `--alpha` | `0.05` | Significance level |
+
+```bash
+python analysis/analyse_event_verify.py \
+    --sweep_dir sweep/EXP_event_verify/ \
+    --output_csv experiment_result/event_verify_analysis.csv
+```
+
+**Stdout** prints:
+1. **FPR table** — false-positive rate per event type per (model, condition).
+2. **Composite hallucination score** — fraction of videos where the VLM said "yes" to any of the five hallucination events (excludes `visual_artifacts`, which is an artifact-detection probe).
+3. **Fisher's exact tests** — pairwise comparisons between conditions per model with Holm–Bonferroni correction. The primary comparison (temporal vs non-temporal) isolates the temporal component.
+4. **Temporal vs spatial interaction** — FPR deltas between temporal and non-temporal conditions, grouped by event category (temporal: `loss_of_control`, `overturn`; spatial: `fire_smoke`; artifact: `visual_artifacts`; ambiguous: `collision`, `pedestrian`).
+
+**Output CSV columns:** `model`, `condition`, `n`, `fpr_collision`, `fpr_loss_of_control`, `fpr_fire_smoke`, `fpr_overturn`, `fpr_pedestrian`, `fpr_visual_artifacts`, `n_yes_collision`, `n_yes_loss_of_control`, `n_yes_fire_smoke`, `n_yes_overturn`, `n_yes_pedestrian`, `n_yes_visual_artifacts`, `composite_fpr`, `composite_n_yes`.
 
 ### `run_exp_temporal_ablation.sh`
 
