@@ -70,8 +70,6 @@ except ImportError:
     ]
 
 DESCRIPTIVE_PROMPT = (
-    "Describe what happens in this video step by step. "
-    "Note any changes, events, or unusual occurrences. "
     "Are there any road accidents or anomalies in the video?"
 )
 
