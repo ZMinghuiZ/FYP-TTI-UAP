@@ -35,6 +35,22 @@ def load_gemma_model(model_path):
     processor = AutoProcessor.from_pretrained(model_path)
     return model, processor
 
+def split_thinking_response(raw_text):
+    """Split a thinking-mode response into (thinking_text, final_answer).
+
+    When thinking is enabled, the raw decoded output (with special tokens)
+    contains <think>...</think> followed by the actual answer.
+    """
+    if "</think>" in raw_text:
+        parts = raw_text.split("</think>", 1)
+        thinking = parts[0].replace("<think>", "").strip()
+        answer = parts[1]
+        for tag in ("<end_of_turn>", "<eos>"):
+            answer = answer.replace(tag, "")
+        return thinking, answer.strip()
+    return "", raw_text.strip()
+
+
 def parse_response(text):
     """
     Parse VLM response to extract a binary Yes/No with negation awareness.
@@ -73,7 +89,7 @@ def parse_response(text):
 
     return "ambiguous"
 
-def main(model_path, accident_folder):
+def main(model_path, accident_folder, enable_thinking=False):
     # --- A. INIT MODEL ---
     try:
         model, processor = load_gemma_model(model_path)
@@ -105,6 +121,8 @@ def main(model_path, accident_folder):
 
     with open(csv_filename, mode='w', newline='', encoding='utf-8-sig') as csv_file:
         fieldnames = ['filename', 'prediction', 'status', 'model_answer']
+        if enable_thinking:
+            fieldnames.append('thinking')
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -133,18 +151,25 @@ def main(model_path, accident_folder):
                     add_generation_prompt=True,
                     return_dict=True,
                     return_tensors="pt",
-                    enable_thinking=False,
+                    enable_thinking=enable_thinking,
                 )
 
                 inputs = inputs.to(model.device)
 
+                max_tokens = 2048 if enable_thinking else 128
                 with torch.no_grad():
-                    generated_ids = model.generate(**inputs, max_new_tokens=128)
+                    generated_ids = model.generate(**inputs, max_new_tokens=max_tokens)
 
                 generated_ids_trimmed = generated_ids[0][inputs.input_ids.shape[-1]:]
-                output_text = processor.decode(generated_ids_trimmed, skip_special_tokens=True)
 
-                prediction = parse_response(output_text)
+                if enable_thinking:
+                    raw_text = processor.decode(generated_ids_trimmed, skip_special_tokens=False)
+                    thinking_text, final_answer = split_thinking_response(raw_text)
+                else:
+                    final_answer = processor.decode(generated_ids_trimmed, skip_special_tokens=True)
+                    thinking_text = ""
+
+                prediction = parse_response(final_answer)
                 is_correct = (prediction == "no")
 
                 if prediction == "ambiguous":
@@ -159,8 +184,10 @@ def main(model_path, accident_folder):
                     "filename": filename,
                     "prediction": prediction,
                     "status": "Correct" if is_correct else "Missed",
-                    "model_answer": output_text.replace('\n', ' ')
+                    "model_answer": final_answer.replace('\n', ' ')
                 }
+                if enable_thinking:
+                    result_row["thinking"] = thinking_text.replace('\n', ' ')
 
             except Exception as e:
                 error_msg = str(e)
@@ -172,6 +199,8 @@ def main(model_path, accident_folder):
                     "status": "Error",
                     "model_answer": f"ERROR: {error_msg}"
                 }
+                if enable_thinking:
+                    result_row["thinking"] = ""
                 torch.cuda.empty_cache()
 
             if result_row:
@@ -188,6 +217,7 @@ def main(model_path, accident_folder):
         "      ADVERSARIAL EVALUATION RESULTS    \n"
         "========================================\n"
         f"Model:              {model_path}\n"
+        f"Thinking:           {'Enabled' if enable_thinking else 'Disabled'}\n"
         f"Folder:             {accident_folder}\n"
         f"Total Videos:       {total_videos}\n"
         f"Evaluated:          {evaluated}\n"
@@ -214,6 +244,8 @@ if __name__ == "__main__":
                         help="HuggingFace model ID or local path")
     parser.add_argument("--video_dir", type=str, default="/home/z/zminghui/videos/target_adv_clean_v11",
                         help="Directory containing adversarial videos to evaluate")
+    parser.add_argument("--enable_thinking", action="store_true", default=False,
+                        help="Enable Gemma4 thinking mode (longer generation, logs reasoning)")
     args = parser.parse_args()
 
-    main(args.model_path, args.video_dir)
+    main(args.model_path, args.video_dir, args.enable_thinking)
