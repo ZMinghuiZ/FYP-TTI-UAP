@@ -10,7 +10,8 @@ TTI-UAP is a framework for crafting **universal adversarial perturbations** (UAP
 
 ```mermaid
 flowchart LR
-    A[Normal Images] --> B[precompute_accident_temporal.py]
+    A[Normal Images]
+    B[precompute_accident_temporal.py]
     C[Accident Videos] --> B
     B --> D[accident_temporal.pt]
     A --> E[tti_attack.py]
@@ -84,7 +85,7 @@ The datasets used in this project (training images, evaluation videos, and templ
 - Python 3.10+
 - CUDA-capable GPU (H100 / A100 recommended)
 - Conda environment (default name: `videollama`)
-- Separate `gemma4` conda env for Gemma 4 evaluation (Python 3.10+, transformers 5.x — see `evaluation/README.md` for setup)
+- Separate `gemma4` conda env for Gemma 4 evaluation (Python 3.10+, transformers 4.52+ -- see `evaluation/gemma4/requirements.txt` and `evaluation/README.md` for setup)
 - SLURM cluster (for shell scripts; local execution also works)
 
 Install dependencies:
